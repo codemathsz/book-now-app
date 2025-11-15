@@ -1,24 +1,40 @@
+import { useMemo } from "react";
+
+import { DashboardHeader } from "@/components/DashboardHeader";
+import { ReservationCard } from "@/components/ReservationCard";
+
 function Dashboard() {
+
+  const today = useMemo(() => {
+    const date = new Date();
+    return date.toLocaleDateString('pt-BR', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  }, [])
+
   return (
-    <div className="">
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h2 className="text-xl font-semibold mb-2">Reservas Ativas</h2>
-            <p className="text-3xl font-bold text-blue-600">0</p>
-          </div>
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h2 className="text-xl font-semibold mb-2">Pendentes</h2>
-            <p className="text-3xl font-bold text-yellow-600">0</p>
-          </div>
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h2 className="text-xl font-semibold mb-2">Concluídas</h2>
-            <p className="text-3xl font-bold text-green-600">0</p>
-          </div>
+    <main className="flex flex-col gap-8">
+      <div className="flex flex-col gap-2">
+        <h1 className="text-4xl font-bold">Olá, João Silva! 👋</h1>
+        <span className="text-lg text-gray-500">{today}</span>
+      </div>
+
+      <DashboardHeader />
+
+      <div className="flex-1  flex flex-col border rounded-2xl p-4 gap-8">
+        <h1 className="font-bold text-2xl">Minhas Próximas Reservas</h1>
+        <div className="flex-1 flex flex-col gap-4 justify-center items-center text-gray-400">
+          {
+            Array.from({ length: 3 }).map((_, index) => (
+              <ReservationCard key={index} />
+            ))
+          }
         </div>
       </div>
-    </div>
+    </main>
   );
 }
 

@@ -7,6 +7,7 @@ import AdminDashboard from './pages/AdminDashboard'
 import Register from './pages/Register'
 import AppLayout from './Layouts/AppLayout'
 import Reservations from './pages/Reservations'
+import NewReservation from './pages/NewReservation'
 
 export const routes = {
     home: '/',
@@ -56,7 +57,7 @@ export const router = createBrowserRouter([
             },
             {
                 path: routes.reservationsNew,
-                element: <Reservations />
+                element: <NewReservation />
             }
         ]
     }

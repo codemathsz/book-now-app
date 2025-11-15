@@ -1,25 +1,11 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Home from './pages/Home';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import Dashboard from './pages/Dashboard';
-import Reservations from './pages/Reservations';
-import NewReservation from './pages/NewReservation';
-import AdminDashboard from './pages/AdminDashboard';
+import { RouterProvider } from 'react-router-dom';
+import { router } from './routes';
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/reservations" element={<Reservations />} />
-        <Route path="/reservations/new" element={<NewReservation />} />
-        <Route path="/admin/dashboard" element={<AdminDashboard />} />
-      </Routes>
-    </BrowserRouter>
+      <div className="min-h-screen" style={{ backgroundColor: 'var(--background)' }}>
+        <RouterProvider router={router} />
+      </div>
   );
 }
 

@@ -2,6 +2,7 @@ import { Button } from "@/components/Button";
 import { Calendar } from "@/components/Calendar";
 import { CardContainer } from "@/components/CardContainer";
 import { CardTimes } from "@/components/CardTimes";
+import { ReservationModal } from "@/components/ReservationModal";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -9,8 +10,13 @@ export default function NewReservation() {
 
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string>("");
-  const formatDateForDisplay = (date: Date) => {
-    return date.toLocaleDateString('pt-BR', {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+
+  const formatDateForDisplay = (date: Date | string) => {
+    let parsedDate = new Date(date);
+    
+    return parsedDate.toLocaleDateString('pt-BR', {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
@@ -99,13 +105,27 @@ export default function NewReservation() {
                 </Link>
               </Button>
 
-              <Button>
+              <Button 
+                variant="primary"
+                onClick={() => setIsModalOpen(true)}
+              >
                 <p>Confirmar Reserva</p>
               </Button>
             </div>
           </div>
         )
       }
+
+      <ReservationModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        date={formatDateForDisplay(selectedDate!)}
+        time={selectedTime}
+        table="Mesa 3"
+        onConfirm={() => {
+          // Lógica após confirmar
+        }}
+      />
     </div>
 
   );

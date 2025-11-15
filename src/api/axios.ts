@@ -15,7 +15,16 @@ const responseInterceptor = (response: any) => response
 const errorInterceptor = (error: any) => {
     // Handle specific status codes
     if (error.response?.status === 401) {
-        window.location.href = '/login'
+        // Não redireciona se for o endpoint de verificação de auth
+        const isAuthCheck = error.config?.url?.includes('/auth/me');
+        
+        if (!isAuthCheck) {
+            // Só redireciona se não estiver na página de login
+            const currentPath = window.location.pathname;
+            if (!currentPath.includes('/login') && !currentPath.includes('/register')) {
+                window.location.href = '/login';
+            }
+        }
     }
 
     if (error.response?.status === 403) {

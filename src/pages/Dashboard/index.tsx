@@ -2,8 +2,11 @@ import { useMemo } from "react";
 
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { ReservationCard } from "@/components/ReservationCard";
+import { useAuth } from "@/hooks/useAuth";
 
 function Dashboard() {
+
+  const { user } = useAuth();
 
   const today = useMemo(() => {
     const date = new Date();
@@ -18,7 +21,7 @@ function Dashboard() {
   return (
     <main className="flex flex-col gap-8">
       <div className="flex flex-col gap-2">
-        <h1 className="text-4xl font-bold">Olá, João Silva! 👋</h1>
+        <h1 className="text-4xl font-bold">Olá, {user?.name}! 👋</h1>
         <span className="text-lg text-gray-500">{today}</span>
       </div>
 

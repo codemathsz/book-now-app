@@ -1,14 +1,9 @@
 import { useAuth } from '@/hooks/useAuth';
 import { routes } from '@/routes';
-import { useEffect } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 
 export function PublicRoute() {
-    const { user, checkAuth } = useAuth();
-
-    useEffect(() => {
-        checkAuth();
-    }, []);
+    const { user,  } = useAuth();
 
     if (user === undefined) {
         // Ainda carregando

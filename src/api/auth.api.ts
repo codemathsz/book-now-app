@@ -47,8 +47,8 @@ export const authenticate = async (data: LoginDTO): Promise<AuthResponse> => {
  */
 export const checkAuth = async (): Promise<IUser> => {
     try {
-        const response = await axiosInstance.get('/auth/me');
-        return response.data;
+        const response = await axiosInstance.get('/auth/me');        
+        return response.data.user;
     } catch (error: any) {
         throw new Error('Não autenticado');
     }

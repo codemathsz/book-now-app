@@ -50,7 +50,6 @@ export const AuthProvider = ({children}: AuthProviderProps) => {
         }
     }
 
-    // Verifica autenticação ao montar o componente
     useEffect(() => {
         checkAuth();
     }, []);

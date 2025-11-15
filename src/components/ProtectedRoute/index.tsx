@@ -1,15 +1,10 @@
-import { useEffect } from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { routes } from '@/routes';
 
 export function ProtectedRoute() {
-    const { user, checkAuth } = useAuth();
+    const { user } = useAuth();
     const location = useLocation();
-
-    useEffect(() => {
-        checkAuth();
-    }, []);
 
     if (user === undefined) {
         return (

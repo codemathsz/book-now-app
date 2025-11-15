@@ -1,11 +1,29 @@
 import { Mail, Lock, UtensilsCrossed } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '../../components/Button';
 import { Input } from '../../components/Input';
+import { useAuth } from '@/hooks/useAuth';
+import { useState } from 'react';
 
-function Login() {
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+export default function Login() {
+
+  const { login } = useAuth()
+  const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    console.log("Submitting login form")
+    try {
+      e.preventDefault();
+      if (!email || !password) {
+        return;
+      }
+      await login({ email, password });
+      navigate('/dashboard');
+    } catch (error) {
+      console.log("Error login: ", error);
+    }
   };
 
   return (
@@ -32,6 +50,8 @@ function Login() {
               placeholder="seu@email.com"
               icon={<Mail className="w-5 h-5" />}
               required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
 
             <Input
@@ -40,6 +60,8 @@ function Login() {
               placeholder="••••••"
               icon={<Lock className="w-5 h-5" />}
               required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
 
             <Button type="submit" className="w-full mt-6">
@@ -58,5 +80,3 @@ function Login() {
     </div>
   );
 }
-
-export default Login;

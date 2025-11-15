@@ -8,6 +8,8 @@ import Register from './pages/Register'
 import AppLayout from './Layouts/AppLayout'
 import Reservations from './pages/Reservations'
 import NewReservation from './pages/NewReservation'
+import { ProtectedRoute } from './components/ProtectedRoute'
+import { PublicRoute } from './components/PublicRoute'
 
 export const routes = {
     home: '/',
@@ -28,36 +30,47 @@ export type AppRouteProps<T extends keyof AppRouteList> =
 export type RedirectTo = AppRouteList[keyof AppRouteList]
 
 export const router = createBrowserRouter([
+
     {
-        path: routes.home,
-        element: <Home />
-    },
-    {
-        path: routes.login,
-        element: <Login />
-    },
-    {   
-        path: routes.register,
-        element: <Register />
-    },
-    {
-        element: <AppLayout/>,
-        children:[
+        element: <PublicRoute />,
+        children: [
             {
-                path: routes.dashboard,
-                element: <Dashboard />
+                path: routes.home,
+                element: <Home />
             },
             {
-                path: routes.adminDashboard,
-                element: <AdminDashboard />
+                path: routes.login,
+                element: <Login />
             },
             {
-                path: routes.reservations,
-                element: <Reservations />
-            },
+                path: routes.register,
+                element: <Register />
+            }
+        ]
+    },
+    {
+        element: <ProtectedRoute />,
+        children: [
             {
-                path: routes.reservationsNew,
-                element: <NewReservation />
+                element: <AppLayout />,
+                children: [
+                    {
+                        path: routes.dashboard,
+                        element: <Dashboard />
+                    },
+                    {
+                        path: routes.adminDashboard,
+                        element: <AdminDashboard />
+                    },
+                    {
+                        path: routes.reservations,
+                        element: <Reservations />
+                    },
+                    {
+                        path: routes.reservationsNew,
+                        element: <NewReservation />
+                    }
+                ]
             }
         ]
     }

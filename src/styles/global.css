@@ -53,6 +53,10 @@
   --ring: 217 91% 60%;
 }
 
+* {
+  border-color: hsl(var(--border));
+}
+
 body {
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));

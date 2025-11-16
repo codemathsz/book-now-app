@@ -3,13 +3,16 @@ import { Calendar } from "@/components/Calendar";
 import { CardContainer } from "@/components/CardContainer";
 import { CardTimes } from "@/components/CardTimes";
 import { ReservationModal } from "@/components/ReservationModal";
+import { useReservations } from "@/hooks/useReservations";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
 export default function NewReservation() {
 
+  const { timeSlots } = useReservations();  
+  const { handleCreateReservation } = useReservations()
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [selectedTime, setSelectedTime] = useState<string>("");
+  const [selectedTime, setSelectedTime] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
 
@@ -22,6 +25,21 @@ export default function NewReservation() {
       month: 'long',
       day: 'numeric'
     });
+  }
+
+  const handleConfirmReservation = async () => {
+    try {
+      if(!selectedDate || !selectedTime){
+        return;
+      }
+
+      await handleCreateReservation({
+        date: selectedDate.toISOString().split('T')[0],
+        time_slot_id: selectedTime
+      });
+    } catch (error) {
+      
+    }
   }
 
   return (
@@ -62,29 +80,20 @@ export default function NewReservation() {
               </div>
 
               <div className="flex justify-between items-start px-2 gap-4 ">
-                <CardTimes 
-                  timeLabel="12:00 - 12:30"
-                  totalTables={6}
-                  tablesAvailable={3}
-                  onSelect={(time) => setSelectedTime(time)}
-                  selected={selectedTime === "12:00 - 12:30"}
-                />
-
-                <CardTimes 
-                  timeLabel="12:30 - 13:00"
-                  totalTables={6}
-                  tablesAvailable={1}
-                  onSelect={(time) => setSelectedTime(time)}
-                  selected={selectedTime === "12:30 - 13:00"}
-                />
-
-                <CardTimes 
-                  timeLabel="13:00 - 13:30"
-                  totalTables={6}
-                  tablesAvailable={0}
-                  onSelect={(time) => setSelectedTime(time)}
-                  selected={selectedTime === "13:00 - 13:30"}
-                />
+                {
+                  timeSlots.map((time) =>{
+                    return (
+                      <CardTimes 
+                        key={time.id}
+                        timeSlot={time}
+                        totalTables={time.max_tables}
+                        tablesAvailable={1}//mudar isso depois
+                        onSelect={(time) => setSelectedTime(time)}
+                        selected={selectedTime === time.id}
+                      />
+                    )
+                  })
+                }
               </div>
 
             </div>
@@ -120,11 +129,9 @@ export default function NewReservation() {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         date={formatDateForDisplay(selectedDate!)}
-        time={selectedTime}
-        table="Mesa 3"
-        onConfirm={() => {
-          // Lógica após confirmar
-        }}
+        time={selectedTime!}
+        table={3}
+        onConfirm={() => handleConfirmReservation()}
       />
     </div>
 

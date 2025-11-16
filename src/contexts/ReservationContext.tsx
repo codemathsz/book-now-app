@@ -1,6 +1,6 @@
-import { getAllReservations } from "@/api/reservation.api";
+import { createReservation, getAllReservations } from "@/api/reservation.api";
 import { getAllTimeSlots } from "@/api/time-slots.api";
-import type { Reservation, TimeSlot } from "@/types";
+import type { CreateReservationDTO, Reservation, TimeSlot } from "@/types";
 import { createContext, useEffect, useState } from "react";
 
 interface ReservationProviderProps{
@@ -10,7 +10,7 @@ interface ReservationProviderProps{
 export type ReservationContextType = {
     reservations: Reservation[];
     timeSlots: TimeSlot[];
-    handleCreateReservation: (reservation: Reservation) => void;
+    handleCreateReservation: (reservation: CreateReservationDTO) => void;
     handleCancelReservation: (reservationId: string) => void;
     handleGetAllReservations: () => Promise<void>;
     getTimeSlots: () => Promise<void>;
@@ -23,8 +23,14 @@ export const ReservationProvider = ({children}: ReservationProviderProps) => {
     const [reservations, setReservations] = useState<Reservation[]>([]);
     const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);
 
-    const handleCreateReservation = async (reservation: Reservation) => {
-        
+    const handleCreateReservation = async (reservation: CreateReservationDTO) => {
+        try {
+            const response = await createReservation(reservation);
+            if(!response) return;
+            setReservations(prev => [...prev, response]);
+        } catch (error) {
+            console.log("Error creating reservation in context", error);
+        }
     }
 
     const handleGetAllReservations = async () => {

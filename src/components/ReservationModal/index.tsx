@@ -1,16 +1,17 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Check, Loader2 } from 'lucide-react';
 import { Button } from '../Button';
 import { Modal } from '../Modal';
+import { useReservations } from '@/hooks/useReservations';
 
 interface ReservationModalProps {
     isOpen: boolean;
     onClose: () => void;
     date: string;
-    time: string;
-    table: string;
-    onConfirm: () => void;
+    time: number;
+    table: number;
+    onConfirm: () => Promise<void>;
 }
 
 type ModalStep = 'confirmation' | 'loading' | 'success';
@@ -24,15 +25,18 @@ export function ReservationModal({
     onConfirm,
 }: ReservationModalProps) {
     const [step, setStep] = useState<ModalStep>('confirmation');
+    const { timeSlots } = useReservations();
     const navigate = useNavigate();
+
+    const timeSlot = useMemo(() =>{
+        return timeSlots.find(slot => slot.id === time);
+    }, [timeSlots, time]);
 
     const handleConfirm = async () => {
         setStep('loading');
-
-        setTimeout(() => {
+        onConfirm().then(() =>{
             setStep('success');
-            onConfirm();
-        }, 2000);
+        });
     };
 
     const handleClose = () => {
@@ -74,7 +78,7 @@ export function ReservationModal({
                     <div className="mb-6">
                         <p className="text-gray-600 mb-2">{date}</p>
                         <p className="text-lg font-semibold text-gray-900">
-                            {time} • {table}
+                            {timeSlot?.label} • {table}
                         </p>
                     </div>
 
@@ -126,7 +130,7 @@ export function ReservationModal({
                     <div className="mb-8">
                         <p className="text-gray-600 mb-2">{date}</p>
                         <p className="text-lg font-semibold text-gray-900">
-                            {time} • {table}
+                            {timeSlot?.label} • {table}
                         </p>
                     </div>
 

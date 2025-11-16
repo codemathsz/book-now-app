@@ -1,15 +1,16 @@
 import { Check, Clock, Info, X } from "lucide-react";
 import { Button } from "../Button";
+import type { TimeSlot } from "@/types";
 
 interface CardTimesProps {
     selected: boolean;
-    timeLabel: string;
+    timeSlot: TimeSlot;
     tablesAvailable: number;
     totalTables: number;
-    onSelect: (timeLabel: string) => void;
+    onSelect: (timeSlotId: number) => void;
 }
 
-export function CardTimes({ selected, timeLabel, tablesAvailable, totalTables, onSelect }: CardTimesProps) {
+export function CardTimes({ selected, timeSlot, tablesAvailable, totalTables, onSelect }: CardTimesProps) {
     const isSoldOut = tablesAvailable === 0;
     const isLastTables = tablesAvailable <= 2;
     const occupationPercentage = ((totalTables - tablesAvailable) / totalTables) * 100;
@@ -47,13 +48,13 @@ export function CardTimes({ selected, timeLabel, tablesAvailable, totalTables, o
                 ${!isSoldOut && !selected ? 'hover:border-gray-300' : ''}
                 min-w-60
             `}
-            onClick={() => onSelect(timeLabel)}
+            onClick={() => onSelect(timeSlot.id)}
         >
             <div className="mb-4">
                 <Clock className="w-8 h-8" color="#3b82f6" />
             </div>
 
-            <h1 className="font-semibold text-xl text-black mb-3">{timeLabel}</h1>
+            <h1 className="font-semibold text-xl text-black mb-3">{timeSlot.label}</h1>
 
             <div
                 className={`
@@ -86,7 +87,7 @@ export function CardTimes({ selected, timeLabel, tablesAvailable, totalTables, o
                 <Button
                     variant={selected ? "primary" : "outline"}
                     className="w-full mt-2 gap-2"
-                    onClick={() => onSelect(timeLabel)}
+                    onClick={() => onSelect(timeSlot.id)}
                 >
                     {selected ? (
                         <>

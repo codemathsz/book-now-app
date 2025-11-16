@@ -1,4 +1,4 @@
-import { createReservation, getAdminAllReservations, getAllReservations } from "@/api/reservation.api";
+import { cancelReservation, createReservation, getAdminAllReservations, getAllReservations } from "@/api/reservation.api";
 import { getAllTimeSlots, getAvailability } from "@/api/time-slots.api";
 import type { AvailabilityTimeSlots, CreateReservationDTO, Reservation, ReservationAdmin, TimeSlot } from "@/types";
 import { createContext, useEffect, useState } from "react";
@@ -10,14 +10,14 @@ interface ReservationProviderProps{
 export type ReservationContextType = {
     reservations: Reservation[];
     timeSlots: TimeSlot[];
-    availableTimeSlots: AvailabilityTimeSlots[]
+    availableTimeSlots: AvailabilityTimeSlots[];
+    reservationsAllByDate: ReservationAdmin[];
     handleCreateReservation: (reservation: CreateReservationDTO) => Promise<void>;
-    handleCancelReservation: (reservationId: string) => void;
+    handleCancelReservation: (reservationId: string) => Promise<void>;
     handleGetAllReservations: () => Promise<void>;
     getTimeSlots: () => Promise<void>;
     getAvailabilityTimeSlots: (date: string) => Promise<void>;
     handleGetAdminAllReservations: (date: string) => Promise<void>;
-    reservationsAllByDate: ReservationAdmin[];
 }
 
 export const ReservationContext = createContext<ReservationContextType>({} as ReservationContextType);
@@ -32,45 +32,67 @@ export const ReservationProvider = ({children}: ReservationProviderProps) => {
     const handleCreateReservation = async (reservation: CreateReservationDTO) => {
         try {
             const response = await createReservation(reservation);
-            if(!response) throw new Error('Erro ao criar reserva');
+            if (!response) throw new Error('Failed to create reservation');
             setReservations(prev => [...prev, response]);
         } catch (error) {
-            console.log("Error creating reservation in context", error);
+            console.error("Error creating reservation:", error);
             throw error;
         }
     }
 
     const handleGetAllReservations = async () => {
-        const response = await getAllReservations();
-
-        if(response){
-            setReservations(response.reservations);
+        try {
+            const response = await getAllReservations();
+            if (response) {
+                setReservations(response.reservations);
+            }
+        } catch (error) {
+            console.error("Error fetching reservations:", error);
         }
     }
 
     const handleCancelReservation = async (reservationId: string) => {
-
-    }
-
-    const getTimeSlots = async () =>{
-        const response = await getAllTimeSlots();
-
-        if(response){
-            setTimeSlots(response.timeSlots);
+        try {
+            const response = await cancelReservation(reservationId);
+            if (response) {
+                await handleGetAllReservations();
+            }
+        } catch (error) {
+            console.error("Error canceling reservation:", error);
+            throw error;
         }
     }
 
-    const getAvailabilityTimeSlots = async (date: string) =>{
-        const response = await getAvailability(date);
-        if(response){
-            setAvailableTimeSlots(response.availability);
+    const getTimeSlots = async () => {
+        try {
+            const response = await getAllTimeSlots();
+            if (response) {
+                setTimeSlots(response.timeSlots);
+            }
+        } catch (error) {
+            console.error("Error fetching time slots:", error);
         }
     }
 
-    const handleGetAdminAllReservations = async (date:string) =>{
-        const response = await getAdminAllReservations(date);   
-        if(response){
-            setReservationsAllByDate(response.reservations);
+    const getAvailabilityTimeSlots = async (date: string) => {
+        try {
+            const response = await getAvailability(date);
+            if (response) {
+                setAvailableTimeSlots(response.availability);
+            }
+        } catch (error) {
+            console.error("Error fetching availability:", error);
+        }
+    }
+
+    const handleGetAdminAllReservations = async (date: string) => {
+        try {
+            const response = await getAdminAllReservations(date);
+            if (response) {
+                setReservationsAllByDate(response.reservations);
+            }
+        } catch (error) {
+            console.error("Error fetching admin reservations:", error);
         }
     }
 

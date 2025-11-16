@@ -2,8 +2,37 @@ import { ArrowRight, Calendar, CalendarCheck, Plus } from "lucide-react";
 import { DashboardCard } from "../DashboardCard";
 import { Link } from "react-router-dom";
 import { Button } from "../Button";
+import { useReservations } from "@/hooks/useReservations";
 
 export function DashboardHeader() {
+
+    const { reservations, timeSlots} = useReservations()
+
+    const getNextReservation = () => {
+        if (reservations.length === 0) return null;
+
+        const now = new Date();
+
+        const sortedReservations = [...reservations].sort((a, b) => {
+            // Compara apenas as datas primeiro
+            const dateA = new Date(a.date);
+            const dateB = new Date(b.date);
+            
+            return dateA.getTime() - dateB.getTime();
+        });
+
+        // Filtra apenas reservas futuras ou de hoje
+        const futureReservations = sortedReservations.filter(reservation => {
+            const reservationDate = new Date(reservation.date);
+            reservationDate.setHours(23, 59, 59, 999); // Inclui reservas do dia todo
+            return reservationDate >= now;
+        });
+
+        return futureReservations[0] || null;
+    }
+
+    const nextReservation = getNextReservation();
+
     return (
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -14,10 +43,26 @@ export function DashboardHeader() {
                 iconColor="#3b82f6"
             >
                 <div className="flex flex-col justify-center items-start gap-4">
-                    <div className="flex flex-col gap-2 justify-center items-start">
-                        <h1 className="font-bold text-2xl">12:00 - 12:30 </h1>
-                        <p className="text-sm text-gray-500">22/11/2024 ° Mesa 3</p>
-                    </div>
+                    {
+                        nextReservation ? (
+
+                             <div className="flex flex-col gap-2 justify-center items-start">
+                                <h1 className="font-bold text-2xl">{timeSlots.find(slot => slot.id === nextReservation.time_slot_id)?.label}</h1>
+                                <p className="text-sm text-gray-500">
+                                    {new Date(nextReservation.date).toLocaleDateString('pt-BR', { 
+                                        weekday: 'long', 
+                                        day: 'numeric', 
+                                        month: 'long' 
+                                    })}
+                                     ° 
+                                    {nextReservation.table_number}
+                                </p>
+                            </div>
+                           
+                        ) : (
+                            <p className="text-sm text-gray-500">Nenhuma reserva futura</p>
+                        )
+                    }
                     <Link
                         to="/reservations"
                         className="flex justify-start items-center gap-2"
@@ -34,7 +79,7 @@ export function DashboardHeader() {
                 iconColor="#16a249"
             >
                 <div className="flex flex-col gap-1 justify-center items-start">
-                    <h1 className="font-bold text-2xl">2</h1>
+                    <h1 className="font-bold text-2xl">{reservations.length || 0}</h1>
                     <p className="text-sm text-gray-500">Reservas confirmadas</p>
                 </div>
             </DashboardCard>

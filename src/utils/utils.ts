@@ -1,5 +1,5 @@
-export const formatDateForDisplay = (date: Date | string) => {
-    if(!date) return 
+export const formatDateForDisplay = (date: Date | string): string => {
+    if(!date) return '-';
     let parsedDate: Date;
     
     if (typeof date === 'string') {

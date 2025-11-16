@@ -10,43 +10,57 @@ import { Link } from "react-router-dom";
 
 export default function NewReservation() {
 
-  const { handleCreateReservation, getAvailabilityTimeSlots, availableTimeSlots, reservations, handleGetAllReservations } = useReservations()
+  const { 
+    handleCreateReservation, 
+    getAvailabilityTimeSlots, 
+    availableTimeSlots, 
+    reservations, 
+    handleGetAllReservations 
+  } = useReservations();
+
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  const formatDateToString = (date: Date) => date.toISOString().split('T')[0];
+
   const handleConfirmReservation = async () => {
-    if(!selectedDate || !selectedTime){
+    if (!selectedDate || !selectedTime) {
       throw new Error('Data e horário são obrigatórios');
     }
 
     await handleCreateReservation({
-      date: selectedDate.toISOString().split('T')[0],
+      date: formatDateToString(selectedDate),
       time_slot_id: selectedTime
     });
-  }
+  };
 
   const handleSelectDate = async (date: Date | null) => {
-    if(date){
+    setSelectedDate(date);
+    setSelectedTime(null); // Reset selected time when date changes
+    
+    if (date) {
       setIsLoading(true);
-      setSelectedDate(date);
-      await handleGetAvailableTimeSlots(date.toISOString().split('T')[0]).finally(() =>{
+      try {
+        await getAvailabilityTimeSlots(formatDateToString(date));
+      } catch (error) {
+        console.error("Error fetching available time slots:", error);
+      } finally {
         setIsLoading(false);
-      });
-    } else {
-      setSelectedDate(null);
+      }
     }
-  }
+  };
 
-  const handleGetAvailableTimeSlots = async (date: string) => {
-    try {      
-      if(!date) return;
-      await getAvailabilityTimeSlots(date);
-    } catch (error) {
-      console.log("Error get available time slots handler: ", error);
-    }
-  }
+  const isTimeSlotAlreadyReserved = (timeSlotId: number, date: Date) => {
+    const dateString = formatDateToString(date);
+    return reservations.some(
+      reservation => 
+        reservation.time_slot_id === timeSlotId && 
+        reservation.date === dateString &&
+        reservation.status === 'active'
+    );
+  };
 
   return (
 
@@ -86,28 +100,24 @@ export default function NewReservation() {
               </div>
 
               <div className="flex justify-between items-start px-2 gap-4 ">
-                {
-                  availableTimeSlots?.map((time) =>{
-                    const isAlreadyReserved = reservations.some(
-                      reservation => 
-                        reservation.time_slot_id === time.time_slot_id && 
-                        reservation.date === selectedDate.toISOString().split('T')[0] &&
-                        reservation.status === 'active'
-                    );
+                {availableTimeSlots?.map((time) => {
+                  const isAlreadyReserved = isTimeSlotAlreadyReserved(
+                    time.time_slot_id, 
+                    selectedDate
+                  );
                     
-                    return (
-                      <CardTimes 
-                        key={time.time_slot_id}
-                        availableTimeSlot={time}
-                        totalTables={time.max_tables}
-                        tablesAvailable={time.available_tables}
-                        onSelect={(time) => setSelectedTime(time)}
-                        selected={selectedTime === time.time_slot_id}
-                        isAlreadyReserved={isAlreadyReserved}
-                      />
-                    )
-                  })
-                }
+                  return (
+                    <CardTimes 
+                      key={time.time_slot_id}
+                      availableTimeSlot={time}
+                      totalTables={time.max_tables}
+                      tablesAvailable={time.available_tables}
+                      onSelect={setSelectedTime}
+                      selected={selectedTime === time.time_slot_id}
+                      isAlreadyReserved={isAlreadyReserved}
+                    />
+                  );
+                })}
               </div>
 
             </div>
@@ -139,19 +149,17 @@ export default function NewReservation() {
         )
       }
 
-      {
-        selectedDate !== null && (
-          <ReservationModal
-            isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
-            date={formatDateForDisplay(selectedDate) || ''}
-            time={selectedTime!}
-            table={3}
-            onConfirm={handleConfirmReservation}
-            onSuccess={handleGetAllReservations}
-          />
-        )
-      }
+      {selectedDate && selectedTime && (
+        <ReservationModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          date={formatDateForDisplay(selectedDate)}
+          time={selectedTime}
+          table={3}
+          onConfirm={handleConfirmReservation}
+          onSuccess={handleGetAllReservations}
+        />
+      )}
     </div>
 
   );

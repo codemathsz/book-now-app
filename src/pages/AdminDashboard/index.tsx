@@ -7,10 +7,11 @@ import { ReservationTable } from "@/components/ReservationTable";
 import { CalendarCheck, X, Clock } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useReservations } from "@/hooks/useReservations";
+import { getMostPopularTimeSlot, calculateOccupancyRate, getTimeSlotStats } from "@/utils/reservationStats";
 
 export default function AdminDashboard() {
 
-  const { handleGetAdminAllReservations, reservationsAllByDate } = useReservations()
+  const { handleGetAdminAllReservations, reservationsAllByDate } = useReservations();
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
 
   const lastMonth = useMemo(() => {
@@ -19,94 +20,34 @@ export default function AdminDashboard() {
     return date;
   }, []);
 
-  const mostPopularTimeSlot = useMemo(() => {
-    if (reservationsAllByDate.length === 0) return '-';
+  const mostPopularTimeSlot = useMemo(
+    () => getMostPopularTimeSlot(reservationsAllByDate),
+    [reservationsAllByDate]
+  );
 
-    const countByTimeSlot: Record<number, { count: number; label: string }> = {};
+  const occupancyRate = useMemo(
+    () => calculateOccupancyRate(reservationsAllByDate),
+    [reservationsAllByDate]
+  );
 
-    reservationsAllByDate.forEach((reservation) => {
-      const id = reservation.time_slot_id;
-      const label = reservation.time_slots.label;
+  const timeSlotsWithStats = useMemo(
+    () => getTimeSlotStats(reservationsAllByDate),
+    [reservationsAllByDate]
+  );
 
-      if (!countByTimeSlot[id]) {
-        countByTimeSlot[id] = { count: 0, label };
-      }
-      countByTimeSlot[id].count++;
-    });
-
-    let maxCount = 0;
-    let popularLabel = '-';
-
-    Object.values(countByTimeSlot).forEach((slot) => {
-      if (slot.count > maxCount) {
-        maxCount = slot.count;
-        popularLabel = slot.label;
-      }
-    });
-
-    return popularLabel;
-  }, [reservationsAllByDate]);
-
-  const occupancyRate = useMemo(() => {
-    if (reservationsAllByDate.length === 0) return 0;
-
-    // Contar total de reservas ativas
-    const activeReservations = reservationsAllByDate.filter(
-      reservation => reservation.status === 'active'
-    ).length;
-
-    // Calcular capacidade total do dia (assumindo 3 time slots * 6 mesas = 18 total)
-    // Ajuste esses números conforme sua configuração real
-    const timeSlotsPerDay = 3;
-    const tablesPerSlot = 6;
-    const totalCapacity = timeSlotsPerDay * tablesPerSlot;
-
-    // Calcular porcentagem
-    const percentage = (activeReservations / totalCapacity) * 100;
-
-    return Math.round(percentage);
-  }, [reservationsAllByDate]);
-
-  const timeSlotsWithStats = useMemo(() => {
-    if (reservationsAllByDate.length === 0) return [];
-
-    // Agrupar reservas por time_slot_id
-    const groupedByTimeSlot: Record<number, {
-      label: string;
-      reservations: typeof reservationsAllByDate;
-      maxTables: number;
-    }> = {};
-
-    reservationsAllByDate.forEach((reservation) => {
-      const id = reservation.time_slot_id;
-
-      if (!groupedByTimeSlot[id]) {
-        groupedByTimeSlot[id] = {
-          label: reservation.time_slots.label,
-          reservations: [],
-          maxTables: 6 // Valor padrão, ajustar conforme necessário
-        };
-      }
-
-      groupedByTimeSlot[id].reservations.push(reservation);
-    });
-
-    // Converter para array e calcular estatísticas
-    return Object.values(groupedByTimeSlot).map((slot) => ({
-      timeRange: slot.label,
-      reservedTables: slot.reservations.filter(r => r.status === 'active').length,
-      totalTables: slot.maxTables
-    }));
-  }, [reservationsAllByDate]);
+  const cancelledCount = useMemo(
+    () => reservationsAllByDate.filter(reservation => reservation.status === 'cancelled').length,
+    [reservationsAllByDate]
+  );
 
   const handleSelectData = async (data: Date) => {
     await handleGetAdminAllReservations(data.toISOString().split('T')[0]);
-  }
+  };
 
   useEffect(() => {
-    if (!selectedDate) return
-    handleSelectData(selectedDate)
-  }, [selectedDate])
+    if (!selectedDate) return;
+    handleSelectData(selectedDate);
+  }, [selectedDate]);
 
   return (
     <div className="flex flex-col gap-8">
@@ -148,7 +89,7 @@ export default function AdminDashboard() {
 
               <StatCard
                 title="Canceladas"
-                value={reservationsAllByDate.filter(reservation => reservation.status === 'cancelled').length}
+                value={cancelledCount}
                 subtitle="Reservas canceladas"
                 icon={X}
                 iconColor="text-red-500"

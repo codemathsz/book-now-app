@@ -3,10 +3,12 @@ import { useMemo } from "react";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { ReservationCard } from "@/components/ReservationCard";
 import { useAuth } from "@/hooks/useAuth";
+import { useReservations } from "@/hooks/useReservations";
 
 function Dashboard() {
 
   const { user } = useAuth();
+  const { reservations } = useReservations();
 
   const today = useMemo(() => {
     const date = new Date();
@@ -31,9 +33,11 @@ function Dashboard() {
         <h1 className="font-bold text-2xl">Minhas Próximas Reservas</h1>
         <div className="flex-1 flex flex-col gap-4 justify-center items-center text-gray-400">
           {
-            Array.from({ length: 3 }).map((_, index) => (
+            reservations.length > 0 ? reservations.map((_, index) => (
               <ReservationCard key={index} />
-            ))
+            )) : (
+              <p>Nenhuma reserva encontrada</p>
+            )
           }
         </div>
       </div>

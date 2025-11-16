@@ -1,73 +1,101 @@
-# React + TypeScript + Vite
+# Reserva de Mesas – Grupo Lucio
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Sistema web para reserva de mesas no refeitório corporativo, desenvolvido como solução para o desafio técnico do Grupo Lucio.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 📖 Descrição do Projeto
+Aplicação web que permite colaboradores reservarem mesas em horários pré-definidos no refeitório, com autenticação, validação de regras de negócio e dashboard gerencial para administradores.
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🛠️ Tecnologias Utilizadas
+- **React 19 + TypeScript**
+- **Vite** (build tool)
+- **Tailwind CSS v4** (estilização)
+- **React Router DOM** (roteamento)
+- **Axios** (requisições HTTP)
+- **Context API** (gerenciamento de estado)
+- **Lucide-react** (ícones)
+- **Supabase/PostgreSQL** (banco de dados e autenticação)
+- **Firebase Hosting** (deploy e CI/CD)
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 🏗️ Justificativa de Arquitetura & Decisões
+- **Frontend desacoplado**: React + Vite para agilidade, hot reload e tipagem forte com TypeScript.
+- **Tailwind CSS**: Rapidez na prototipação e responsividade garantida.
+- **Context API**: Centralização do estado de autenticação e reservas, facilitando manutenção e escalabilidade.
+- **Supabase**: BaaS gratuito, integra autenticação e banco de dados relacional, reduzindo tempo de setup e aumentando a segurança.
+- **Firebase Hosting + GitHub Actions**: Deploy rápido, preview de PRs e integração contínua.
+- **Validação de regras de negócio**: Helpers e lógica centralizada para garantir as restrições do desafio.
+- **Componentização**: Reaproveitamento de UI e lógica, facilitando manutenção e testes.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+---
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## 📦 O que foi entregue
+- [x] Cadastro e autenticação de colaboradores
+- [x] Reserva de mesas por horário (12h-12h30, 12h30-13h, 13h-13h30)
+- [x] Limite de 6 mesas por horário
+- [x] Cada colaborador pode reservar até 2 horários por dia, 1 mesa por horário
+- [x] Cancelamento de reservas
+- [x] Dashboard gerencial para administradores
+- [x] Status de disponibilidade dos horários
+- [x] Interface responsiva e intuitiva
+- [x] Validação de todas as regras de negócio
+- [x] Deploy no Firebase Hosting
+- [x] Documentação e instruções de uso
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+### ❌ O que não foi entregue (por tempo/prioridade)
+- [ ] Edição de reservas já criadas
+- [ ] Notificações por e-mail/SMS
+- [ ] Testes automatizados (unitários/E2E)
+- [ ] Painel de permissões avançadas
+- [ ] Tela de perfil
+- [ ] Tela de cadastro de horários e períodos
+- [ ] Tela de cadastro de mesas
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+---
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## ⏳ O que faria diferente com mais tempo
+- Implementaria testes automatizados (unitários e E2E)
+- Adicionaria notificações e lembretes
+- Criaria painel de permissões e logs de auditoria
+- Permitiria edição de reservas e gerenciamento de usuários
+- Integração com Google Calendar
+
+---
+
+## 📝 Como rodar o projeto localmente
+
+1. **Clone o repositório:**
+   ```bash
+   git clone https://github.com/codemathsz/book-now-app.git
+   cd book-now-app
+   ```
+2. **Instale as dependências:**
+   ```bash
+   npm install
+   ```
+3. **Configure o arquivo `.env`:**
+   ```env
+   VITE_API_URL=http://localhost:3000/api
+   ```
+   > Altere para a URL do backend em produção se necessário.
+4. **Rode o projeto:**
+   ```bash
+   npm run dev
+   ```
+5. **Acesse em:**
+   [http://localhost:5173](http://localhost:5173)
+
+---
+
+## 📸 Prints do app em funcionamento
+
+![dashboard usuário](public/images/image3.png)
+![Criar reserva](public/images/image2.png)
+![Minhas reservas](public/images/image4.png)
+
+**Dúvidas ou sugestões?** Abra uma issue ou entre em contato!

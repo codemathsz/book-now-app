@@ -1,19 +1,20 @@
 import { useMemo, useState } from 'react';
 import { ReservationCard } from '../../components/ReservationCard';
 import { useReservations } from '@/hooks/useReservations';
+import { parseDateString } from '@/utils/utils';
 
 type TabType = 'proximas' | 'hoje' | 'historico';
 
 export default function Reservations() {
   const [activeTab, setActiveTab] = useState<TabType>('proximas');
-  const { reservations, timeSlots } = useReservations();
+  const { reservations } = useReservations();
 
   const reservationsToday = useMemo(() => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
     return reservations.filter(reservation => {
-      const reservationDate = new Date(reservation.date);
+      const reservationDate = parseDateString(reservation.date);
       reservationDate.setHours(0, 0, 0, 0);
       return reservationDate.getTime() === today.getTime();
     });
@@ -24,7 +25,7 @@ export default function Reservations() {
     today.setHours(0, 0, 0, 0);
 
     return reservations.filter(reservation => {
-      const reservationDate = new Date(reservation.date);
+      const reservationDate = parseDateString(reservation.date);
       reservationDate.setHours(0, 0, 0, 0);
       return reservationDate.getTime() < today.getTime();
     });
@@ -35,7 +36,7 @@ export default function Reservations() {
     today.setHours(0, 0, 0, 0);
 
     return reservations.filter(reservation => {
-      const reservationDate = new Date(reservation.date);
+      const reservationDate = parseDateString(reservation.date);
       reservationDate.setHours(0, 0, 0, 0);
 
       return reservationDate.getTime() > today.getTime();
@@ -91,7 +92,6 @@ export default function Reservations() {
                 <ReservationCard
                   key={reservation.id}
                   reservation={reservation}
-                  timeSlot={timeSlots.find(timeSlot => timeSlot.id === reservation.time_slot_id)!}
                 />
               ))
             ) : (
@@ -109,7 +109,6 @@ export default function Reservations() {
                 <ReservationCard
                   key={reservation.id}
                   reservation={reservation}
-                  timeSlot={timeSlots.find(timeSlot => timeSlot.id === reservation.time_slot_id)!}
                 />
               ))
             ) : (
@@ -127,7 +126,6 @@ export default function Reservations() {
                 <ReservationCard
                   key={reservation.id}
                   reservation={reservation}
-                  timeSlot={timeSlots.find(timeSlot => timeSlot.id === reservation.time_slot_id)!}
                 />
               ))
             ) : (

@@ -8,7 +8,7 @@ import { useReservations } from "@/hooks/useReservations";
 function Dashboard() {
 
   const { user } = useAuth();
-  const { reservations, timeSlots } = useReservations();
+  const { reservations } = useReservations();
 
   const today = useMemo(() => {
     const date = new Date();
@@ -37,7 +37,6 @@ function Dashboard() {
               <ReservationCard 
                 key={index} 
                 reservation={reservation} 
-                timeSlot={timeSlots.find(timeSlot => timeSlot.id === reservation.time_slot_id)!}
               />
             )) : (
               <p>Nenhuma reserva encontrada</p>

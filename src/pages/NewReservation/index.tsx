@@ -10,27 +10,41 @@ import { Link } from "react-router-dom";
 
 export default function NewReservation() {
 
-  const { timeSlots } = useReservations();  
-  const { handleCreateReservation } = useReservations()
+  const { handleCreateReservation, getAvailabilityTimeSlots, availableTimeSlots, reservations, handleGetAllReservations } = useReservations()
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-
-  
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleConfirmReservation = async () => {
-    try {
-      if(!selectedDate || !selectedTime){
-        return;
-      }
+    if(!selectedDate || !selectedTime){
+      throw new Error('Data e horário são obrigatórios');
+    }
 
-      await handleCreateReservation({
-        date: selectedDate.toISOString().split('T')[0],
-        time_slot_id: selectedTime
+    await handleCreateReservation({
+      date: selectedDate.toISOString().split('T')[0],
+      time_slot_id: selectedTime
+    });
+  }
+
+  const handleSelectDate = async (date: Date | null) => {
+    if(date){
+      setIsLoading(true);
+      setSelectedDate(date);
+      await handleGetAvailableTimeSlots(date.toISOString().split('T')[0]).finally(() =>{
+        setIsLoading(false);
       });
+    } else {
+      setSelectedDate(null);
+    }
+  }
+
+  const handleGetAvailableTimeSlots = async (date: string) => {
+    try {      
+      if(!date) return;
+      await getAvailabilityTimeSlots(date);
     } catch (error) {
-      
+      console.log("Error get available time slots handler: ", error);
     }
   }
 
@@ -53,14 +67,14 @@ export default function NewReservation() {
             {/* Calendário */}
             <Calendar 
               selectedDate={selectedDate} 
-              onDateSelect={(selectedDate) => setSelectedDate(selectedDate)}
+              onDateSelect={(selectedDate) => handleSelectDate(selectedDate)}
             />
           </div>
         </div>
       </CardContainer>
 
       {
-        selectedDate && (
+        selectedDate && !isLoading && (
           <CardContainer>
             <div className="w-full">
               <div className="flex flex-col justify-center items-start gap-2 mb-4">
@@ -68,20 +82,28 @@ export default function NewReservation() {
                   <span className="w-8 h-8 bg-[#3b82f6] rounded-full flex justify-center items-center text-white">1</span>
                   <p className="font-semibold text-2xl text-black">Selecionar Horários</p>
                 </div>
-                <p className="text-base text-gray-500">{formatDateForDisplay(selectedDate)}</p>
+                <p className="text-base text-gray-500">{selectedDate && formatDateForDisplay(selectedDate)}</p>
               </div>
 
               <div className="flex justify-between items-start px-2 gap-4 ">
                 {
-                  timeSlots.map((time) =>{
+                  availableTimeSlots?.map((time) =>{
+                    const isAlreadyReserved = reservations.some(
+                      reservation => 
+                        reservation.time_slot_id === time.time_slot_id && 
+                        reservation.date === selectedDate.toISOString().split('T')[0] &&
+                        reservation.status === 'active'
+                    );
+                    
                     return (
                       <CardTimes 
-                        key={time.id}
-                        timeSlot={time}
+                        key={time.time_slot_id}
+                        availableTimeSlot={time}
                         totalTables={time.max_tables}
-                        tablesAvailable={1}//mudar isso depois
+                        tablesAvailable={time.available_tables}
                         onSelect={(time) => setSelectedTime(time)}
-                        selected={selectedTime === time.id}
+                        selected={selectedTime === time.time_slot_id}
+                        isAlreadyReserved={isAlreadyReserved}
                       />
                     )
                   })
@@ -117,14 +139,19 @@ export default function NewReservation() {
         )
       }
 
-      <ReservationModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        date={formatDateForDisplay(selectedDate!)}
-        time={selectedTime!}
-        table={3}
-        onConfirm={() => handleConfirmReservation()}
-      />
+      {
+        selectedDate !== null && (
+          <ReservationModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            date={formatDateForDisplay(selectedDate) || ''}
+            time={selectedTime!}
+            table={3}
+            onConfirm={handleConfirmReservation}
+            onSuccess={handleGetAllReservations}
+          />
+        )
+      }
     </div>
 
   );

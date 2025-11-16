@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Check, Loader2 } from 'lucide-react';
+import { Check, Loader2, AlertCircle } from 'lucide-react';
 import { Button } from '../Button';
 import { Modal } from '../Modal';
 import { useReservations } from '@/hooks/useReservations';
@@ -12,9 +12,10 @@ interface ReservationModalProps {
     time: number;
     table: number;
     onConfirm: () => Promise<void>;
+    onSuccess?: () => Promise<void>;
 }
 
-type ModalStep = 'confirmation' | 'loading' | 'success';
+type ModalStep = 'confirmation' | 'loading' | 'success' | 'error';
 
 export function ReservationModal({
     isOpen,
@@ -23,6 +24,7 @@ export function ReservationModal({
     time,
     table,
     onConfirm,
+    onSuccess
 }: ReservationModalProps) {
     const [step, setStep] = useState<ModalStep>('confirmation');
     const { timeSlots } = useReservations();
@@ -32,11 +34,20 @@ export function ReservationModal({
         return timeSlots.find(slot => slot.id === time);
     }, [timeSlots, time]);
 
+    const [errorMessage, setErrorMessage] = useState<string>('');
+
     const handleConfirm = async () => {
         setStep('loading');
-        onConfirm().then(() =>{
+        try {
+            await onConfirm();
+            if (onSuccess) {
+                await onSuccess();
+            }
             setStep('success');
-        });
+        } catch (error: any) {
+            setErrorMessage(error?.response?.data?.error || 'Erro ao criar reserva. Tente novamente.');
+            setStep('error');
+        }
     };
 
     const handleClose = () => {
@@ -149,6 +160,40 @@ export function ReservationModal({
                         >
                             Fazer Outra Reserva
                         </button>
+                    </div>
+                </div>
+            )}
+
+            {step === 'error' && (
+                <div className="flex flex-col items-center text-center">
+                    <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-6">
+                        <AlertCircle className="w-8 h-8 text-red-500" />
+                    </div>
+
+                    <h2 className="text-2xl font-bold text-gray-900 mb-3">
+                        Erro ao Confirmar
+                    </h2>
+
+                    <p className="text-gray-600 mb-8">
+                        {errorMessage}
+                    </p>
+
+                    {/* Botões */}
+                    <div className="flex gap-3 w-full">
+                        <Button
+                            variant="outline"
+                            className="flex-1"
+                            onClick={handleClose}
+                        >
+                            Fechar
+                        </Button>
+                        <Button
+                            variant="primary"
+                            className="flex-1"
+                            onClick={() => setStep('confirmation')}
+                        >
+                            Tentar Novamente
+                        </Button>
                     </div>
                 </div>
             )}

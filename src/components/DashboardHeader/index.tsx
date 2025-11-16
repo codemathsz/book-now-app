@@ -54,8 +54,9 @@ export function DashboardHeader() {
                                         day: 'numeric', 
                                         month: 'long' 
                                     })}
+                                    
                                      ° 
-                                    {nextReservation.table_number}
+                                    Mesa {nextReservation.table_number}
                                 </p>
                             </div>
                            

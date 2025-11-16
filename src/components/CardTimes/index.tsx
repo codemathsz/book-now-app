@@ -1,17 +1,18 @@
 import { Check, Clock, Info, X } from "lucide-react";
 import { Button } from "../Button";
-import type { TimeSlot } from "@/types";
+import type { AvailabilityTimeSlots } from "@/types";
 
 interface CardTimesProps {
     selected: boolean;
-    timeSlot: TimeSlot;
+    availableTimeSlot: AvailabilityTimeSlots;
     tablesAvailable: number;
     totalTables: number;
     onSelect: (timeSlotId: number) => void;
+    isAlreadyReserved?: boolean;
 }
 
-export function CardTimes({ selected, timeSlot, tablesAvailable, totalTables, onSelect }: CardTimesProps) {
-    const isSoldOut = tablesAvailable === 0;
+export function CardTimes({ selected, availableTimeSlot, tablesAvailable, totalTables, onSelect, isAlreadyReserved = false }: CardTimesProps) {
+    const isSoldOut = tablesAvailable === 0 || isAlreadyReserved;
     const isLastTables = tablesAvailable <= 2;
     const occupationPercentage = ((totalTables - tablesAvailable) / totalTables) * 100;
 
@@ -28,8 +29,9 @@ export function CardTimes({ selected, timeSlot, tablesAvailable, totalTables, on
     };
 
     const getStatusText = () => {
-        if (isSoldOut) return "Esgotado";
-        if (isLastTables) return "Últimas 1 mesas";
+        if (isAlreadyReserved) return "Já reservado";
+        if (tablesAvailable === 0) return "Esgotado";
+        if (isLastTables) return "Últimas mesas";
         return `${tablesAvailable} mesas disponíveis`;
     };
 
@@ -48,13 +50,13 @@ export function CardTimes({ selected, timeSlot, tablesAvailable, totalTables, on
                 ${!isSoldOut && !selected ? 'hover:border-gray-300' : ''}
                 min-w-60
             `}
-            onClick={() => onSelect(timeSlot.id)}
+            onClick={() => onSelect(availableTimeSlot.time_slot_id)}
         >
             <div className="mb-4">
                 <Clock className="w-8 h-8" color="#3b82f6" />
             </div>
 
-            <h1 className="font-semibold text-xl text-black mb-3">{timeSlot.label}</h1>
+            <h1 className="font-semibold text-xl text-black mb-3">{availableTimeSlot.label}</h1>
 
             <div
                 className={`
@@ -87,7 +89,7 @@ export function CardTimes({ selected, timeSlot, tablesAvailable, totalTables, on
                 <Button
                     variant={selected ? "primary" : "outline"}
                     className="w-full mt-2 gap-2"
-                    onClick={() => onSelect(timeSlot.id)}
+                    onClick={() => onSelect(availableTimeSlot.time_slot_id)}
                 >
                     {selected ? (
                         <>

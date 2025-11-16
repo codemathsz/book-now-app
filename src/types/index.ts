@@ -23,6 +23,26 @@ export interface Reservation {
   }
 }
 
+export interface ReservationAdmin {
+  id: string
+  user_id: string
+  time_slot_id: number
+  date: string
+  table_number: number
+  status: string
+  created_at: string
+  updated_at: string
+  time_slots: {
+    label: string
+    end_time: string
+    start_time: string
+  }
+  users:{
+    name: string
+    email: string
+  }
+}
+
 export interface CreateReservationDTO {
   time_slot_id: number;
   date: string;

@@ -1,6 +1,6 @@
-import { createReservation, getAllReservations } from "@/api/reservation.api";
+import { createReservation, getAdminAllReservations, getAllReservations } from "@/api/reservation.api";
 import { getAllTimeSlots, getAvailability } from "@/api/time-slots.api";
-import type { AvailabilityTimeSlots, CreateReservationDTO, Reservation, TimeSlot } from "@/types";
+import type { AvailabilityTimeSlots, CreateReservationDTO, Reservation, ReservationAdmin, TimeSlot } from "@/types";
 import { createContext, useEffect, useState } from "react";
 
 interface ReservationProviderProps{
@@ -10,12 +10,14 @@ interface ReservationProviderProps{
 export type ReservationContextType = {
     reservations: Reservation[];
     timeSlots: TimeSlot[];
+    availableTimeSlots: AvailabilityTimeSlots[]
     handleCreateReservation: (reservation: CreateReservationDTO) => Promise<void>;
     handleCancelReservation: (reservationId: string) => void;
     handleGetAllReservations: () => Promise<void>;
     getTimeSlots: () => Promise<void>;
     getAvailabilityTimeSlots: (date: string) => Promise<void>;
-    availableTimeSlots: AvailabilityTimeSlots[]
+    handleGetAdminAllReservations: (date: string) => Promise<void>;
+    reservationsAllByDate: ReservationAdmin[];
 }
 
 export const ReservationContext = createContext<ReservationContextType>({} as ReservationContextType);
@@ -23,6 +25,7 @@ export const ReservationContext = createContext<ReservationContextType>({} as Re
 export const ReservationProvider = ({children}: ReservationProviderProps) => {
 
     const [reservations, setReservations] = useState<Reservation[]>([]);
+    const [reservationsAllByDate, setReservationsAllByDate] = useState<ReservationAdmin[]>([]);
     const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);
     const [availableTimeSlots, setAvailableTimeSlots] = useState<AvailabilityTimeSlots[]>([]);
 
@@ -64,6 +67,13 @@ export const ReservationProvider = ({children}: ReservationProviderProps) => {
         }
     }
 
+    const handleGetAdminAllReservations = async (date:string) =>{
+        const response = await getAdminAllReservations(date);   
+        if(response){
+            setReservationsAllByDate(response.reservations);
+        }
+    }
+
     useEffect(() =>{
         getTimeSlots();
         handleGetAllReservations();
@@ -78,7 +88,9 @@ export const ReservationProvider = ({children}: ReservationProviderProps) => {
             getTimeSlots,
             timeSlots,
             getAvailabilityTimeSlots,
-            availableTimeSlots
+            availableTimeSlots,
+            handleGetAdminAllReservations,
+            reservationsAllByDate
         }}>
             {children}
         </ReservationContext.Provider>

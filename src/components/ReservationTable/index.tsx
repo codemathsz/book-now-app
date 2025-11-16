@@ -1,12 +1,7 @@
+import type { ReservationAdmin } from "@/types";
+
 interface ReservationTableProps {
-  reservations: Array<{
-    id: string;
-    name: string;
-    email: string;
-    timeRange: string;
-    table: string;
-    status: 'active' | 'cancelled';
-  }>;
+  reservations: ReservationAdmin[];
 }
 
 export function ReservationTable({ reservations }: ReservationTableProps) {
@@ -30,10 +25,10 @@ export function ReservationTable({ reservations }: ReservationTableProps) {
               {reservations.length > 0 ? (
                 reservations.map((reservation) => (
                   <tr key={reservation.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td className="py-4 px-4 text-gray-900">{reservation.name}</td>
-                    <td className="py-4 px-4 text-gray-600">{reservation.email}</td>
-                    <td className="py-4 px-4 text-gray-900">{reservation.timeRange}</td>
-                    <td className="py-4 px-4 text-gray-900">{reservation.table}</td>
+                    <td className="py-4 px-4 text-gray-900">{reservation.users.name}</td>
+                    <td className="py-4 px-4 text-gray-600">{reservation.users.email}</td>
+                    <td className="py-4 px-4 text-gray-900">{reservation.time_slots.label}</td>
+                    <td className="py-4 px-4 text-gray-900">{reservation.table_number}</td>
                     <td className="py-4 px-4">
                       <span
                         className={`

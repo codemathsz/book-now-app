@@ -14,6 +14,19 @@ export const getAllReservations = async () =>{
     }
 }
 
+
+/** 
+ * @param data (format: YYYY-MM-DD)
+*/
+export const getAdminAllReservations = async (date:string) =>{
+    try {
+        const response = await axiosInstance.get(`/reservations/all?date=${date}`)
+        return response.data
+    } catch (error) {
+        console.log("Error get admin all reservations ", error)
+    }
+}
+
 /**
  *  create a new reservation
  *  @param data - CreateReservationDTO

@@ -3,35 +3,38 @@ import { DashboardCard } from "../DashboardCard";
 import { Link } from "react-router-dom";
 import { Button } from "../Button";
 import { useReservations } from "@/hooks/useReservations";
+import { parseDateString } from "@/utils/utils";
+import { useMemo } from "react";
 
 export function DashboardHeader() {
 
-    const { reservations, timeSlots} = useReservations()
+    const { reservations, timeSlots } = useReservations();
 
-    const getNextReservation = () => {
+    const nextReservation = useMemo(() => {
         if (reservations.length === 0) return null;
 
         const now = new Date();
+        now.setHours(0, 0, 0, 0);
 
-        const sortedReservations = [...reservations].sort((a, b) => {
-            // Compara apenas as datas primeiro
-            const dateA = new Date(a.date);
-            const dateB = new Date(b.date);
-            
-            return dateA.getTime() - dateB.getTime();
-        });
-
-        // Filtra apenas reservas futuras ou de hoje
-        const futureReservations = sortedReservations.filter(reservation => {
-            const reservationDate = new Date(reservation.date);
-            reservationDate.setHours(23, 59, 59, 999); // Inclui reservas do dia todo
-            return reservationDate >= now;
-        });
+        const futureReservations = reservations
+            .filter(reservation => {
+                const reservationDate = parseDateString(reservation.date);
+                reservationDate.setHours(0, 0, 0, 0);
+                return reservationDate >= now && reservation.status === 'active';
+            })
+            .sort((a, b) => {
+                const dateA = parseDateString(a.date);
+                const dateB = parseDateString(b.date);
+                return dateA.getTime() - dateB.getTime();
+            });
 
         return futureReservations[0] || null;
-    }
+    }, [reservations]);
 
-    const nextReservation = getNextReservation();
+    const activeReservationsCount = useMemo(
+        () => reservations.filter(r => r.status === 'active').length,
+        [reservations]
+    );
 
     return (
 
@@ -80,7 +83,7 @@ export function DashboardHeader() {
                 iconColor="#16a249"
             >
                 <div className="flex flex-col gap-1 justify-center items-start">
-                    <h1 className="font-bold text-2xl">{reservations.length || 0}</h1>
+                    <h1 className="font-bold text-2xl">{activeReservationsCount}</h1>
                     <p className="text-sm text-gray-500">Reservas confirmadas</p>
                 </div>
             </DashboardCard>

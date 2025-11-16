@@ -1,7 +1,14 @@
 import { Clock, X } from "lucide-react";
 import { Button } from "../Button";
+import type { Reservation, TimeSlot } from "@/types";
+import { formatDateForDisplay } from "@/utils/utils";
+interface ReservationCardProps {
+    reservation: Reservation;
+    timeSlot: TimeSlot;
+}
 
-export function ReservationCard() {
+export function ReservationCard({ reservation, timeSlot }: ReservationCardProps) {
+
     return(
         <div className="w-full flex flex-col sm:flex-row justify-between gap-4 border rounded-2xl p-4">
             <div className="flex items-center gap-3 sm:gap-4">
@@ -10,8 +17,8 @@ export function ReservationCard() {
                 </div>
 
                 <div className="flex flex-col gap-1 sm:gap-2 justify-center items-start min-w-0">
-                    <h1 className="font-medium text-base sm:text-xl text-black truncate w-full">sexta-feira, 22 de novembro</h1>
-                    <p className="text-sm sm:text-base text-gray-500">12:00 - 12:30 º Mesa 3</p>
+                    <h1 className="font-medium text-base sm:text-xl text-black truncate w-full">{formatDateForDisplay(reservation.date)}</h1>
+                    <p className="text-sm sm:text-base text-gray-500">{timeSlot.label} º Mesa 3</p>
                 </div>
             </div>
             <div className="flex justify-between sm:justify-center items-center gap-3 sm:gap-4">

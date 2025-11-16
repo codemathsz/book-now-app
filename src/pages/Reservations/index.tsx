@@ -1,16 +1,47 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { ReservationCard } from '../../components/ReservationCard';
+import { useReservations } from '@/hooks/useReservations';
 
 type TabType = 'proximas' | 'hoje' | 'historico';
 
 export default function Reservations() {
   const [activeTab, setActiveTab] = useState<TabType>('proximas');
+  const { reservations, timeSlots } = useReservations();
 
-  const mockReservations = [
-    { id: 1, date: 'sexta-feira, 22 de novembro', time: '12:00 - 12:30', table: 'Mesa 3', status: 'active' },
-    { id: 2, date: 'sábado, 23 de novembro', time: '12:30 - 13:00', table: 'Mesa 5', status: 'active' },
-    { id: 3, date: 'segunda-feira, 25 de novembro', time: '13:00 - 13:30', table: 'Mesa 2', status: 'active' },
-  ];
+  const reservationsToday = useMemo(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    return reservations.filter(reservation => {
+      const reservationDate = new Date(reservation.date);
+      reservationDate.setHours(0, 0, 0, 0);
+      return reservationDate.getTime() === today.getTime();
+    });
+  }, [reservations]);
+
+  const reservationsHistory = useMemo(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    return reservations.filter(reservation => {
+      const reservationDate = new Date(reservation.date);
+      reservationDate.setHours(0, 0, 0, 0);
+      return reservationDate.getTime() < today.getTime();
+    });
+  }, [reservations]);
+
+  const reservationsFuture = useMemo(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    return reservations.filter(reservation => {
+      const reservationDate = new Date(reservation.date);
+      reservationDate.setHours(0, 0, 0, 0);
+
+      return reservationDate.getTime() > today.getTime();
+    });
+  }, [reservations]);
+
 
   const tabs = [
     { key: 'proximas' as TabType, label: 'Próximas' },
@@ -54,22 +85,58 @@ export default function Reservations() {
         </h2>
 
         <div className="flex-1 flex flex-col gap-4">
-          {activeTab === 'proximas' && mockReservations.length > 0 ? (
-            mockReservations.map((reservation) => (
-              <ReservationCard key={reservation.id} />
-            ))
-          ) : activeTab === 'hoje' ? (
-            <div className="flex-1 flex items-center justify-center">
-              <p className="text-gray-400 text-center">
-                Nenhuma reserva para hoje
-              </p>
-            </div>
-          ) : (
-            <div className="flex-1 flex items-center justify-center">
-              <p className="text-gray-400 text-center">
-                Nenhuma reserva no histórico
-              </p>
-            </div>
+          {activeTab === 'proximas' && (
+            reservationsFuture.length > 0 ? (
+              reservationsFuture.map((reservation) => (
+                <ReservationCard
+                  key={reservation.id}
+                  reservation={reservation}
+                  timeSlot={timeSlots.find(timeSlot => timeSlot.id === reservation.time_slot_id)!}
+                />
+              ))
+            ) : (
+              <div className="flex-1 flex items-center justify-center">
+                <p className="text-gray-400 text-center">
+                  Nenhuma reserva futura
+                </p>
+              </div>
+            )
+          )}
+
+          {activeTab === 'hoje' && (
+            reservationsToday.length > 0 ? (
+              reservationsToday.map((reservation) => (
+                <ReservationCard
+                  key={reservation.id}
+                  reservation={reservation}
+                  timeSlot={timeSlots.find(timeSlot => timeSlot.id === reservation.time_slot_id)!}
+                />
+              ))
+            ) : (
+              <div className="flex-1 flex items-center justify-center">
+                <p className="text-gray-400 text-center">
+                  Nenhuma reserva para hoje
+                </p>
+              </div>
+            )
+          )}
+
+          {activeTab === 'historico' && (
+            reservationsHistory.length > 0 ? (
+              reservationsHistory.map((reservation) => (
+                <ReservationCard
+                  key={reservation.id}
+                  reservation={reservation}
+                  timeSlot={timeSlots.find(timeSlot => timeSlot.id === reservation.time_slot_id)!}
+                />
+              ))
+            ) : (
+              <div className="flex-1 flex items-center justify-center">
+                <p className="text-gray-400 text-center">
+                  Nenhuma reserva no histórico
+                </p>
+              </div>
+            )
           )}
         </div>
       </div>

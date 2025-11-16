@@ -4,6 +4,7 @@ import { CardContainer } from "@/components/CardContainer";
 import { CardTimes } from "@/components/CardTimes";
 import { ReservationModal } from "@/components/ReservationModal";
 import { useReservations } from "@/hooks/useReservations";
+import { formatDateForDisplay } from "@/utils/utils";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -16,16 +17,7 @@ export default function NewReservation() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
 
-  const formatDateForDisplay = (date: Date | string) => {
-    let parsedDate = new Date(date);
-    
-    return parsedDate.toLocaleDateString('pt-BR', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  }
+  
 
   const handleConfirmReservation = async () => {
     try {

@@ -8,7 +8,7 @@ import { useReservations } from "@/hooks/useReservations";
 function Dashboard() {
 
   const { user } = useAuth();
-  const { reservations } = useReservations();
+  const { reservations, timeSlots } = useReservations();
 
   const today = useMemo(() => {
     const date = new Date();
@@ -33,8 +33,12 @@ function Dashboard() {
         <h1 className="font-bold text-2xl">Minhas Próximas Reservas</h1>
         <div className="flex-1 flex flex-col gap-4 justify-center items-center text-gray-400">
           {
-            reservations.length > 0 ? reservations.map((_, index) => (
-              <ReservationCard key={index} />
+            reservations.length > 0 ? reservations.map((reservation, index) => (
+              <ReservationCard 
+                key={index} 
+                reservation={reservation} 
+                timeSlot={timeSlots.find(timeSlot => timeSlot.id === reservation.time_slot_id)!}
+              />
             )) : (
               <p>Nenhuma reserva encontrada</p>
             )

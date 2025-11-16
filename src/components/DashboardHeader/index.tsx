@@ -3,7 +3,7 @@ import { DashboardCard } from "../DashboardCard";
 import { Link } from "react-router-dom";
 import { Button } from "../Button";
 import { useReservations } from "@/hooks/useReservations";
-import { parseDateString } from "@/utils/utils";
+import { formatDateForDisplay, parseDateString } from "@/utils/utils";
 import { useMemo } from "react";
 
 export function DashboardHeader() {
@@ -52,11 +52,7 @@ export function DashboardHeader() {
                              <div className="flex flex-col gap-2 justify-center items-start">
                                 <h1 className="font-bold text-2xl">{timeSlots.find(slot => slot.id === nextReservation.time_slot_id)?.label}</h1>
                                 <p className="text-sm text-gray-500">
-                                    {new Date(nextReservation.date).toLocaleDateString('pt-BR', { 
-                                        weekday: 'long', 
-                                        day: 'numeric', 
-                                        month: 'long' 
-                                    })}
+                                    {formatDateForDisplay(nextReservation.date)}
                                     
                                      ° 
                                     Mesa {nextReservation.table_number}

@@ -10,6 +10,7 @@ import Reservations from './pages/Reservations'
 import NewReservation from './pages/NewReservation'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import { PublicRoute } from './components/PublicRoute'
+import { DashboardRedirect } from './services/dashboard.redirect'
 
 export const routes = {
     home: '/',
@@ -56,7 +57,7 @@ export const router = createBrowserRouter([
                 children: [
                     {
                         path: routes.dashboard,
-                        element: <Dashboard />
+                        element:  <DashboardRedirect />
                     },
                     {
                         path: routes.adminDashboard,

@@ -33,7 +33,7 @@ export const authenticate = async (data: LoginDTO): Promise<AuthResponse> => {
                 throw new Error(message);
             }
         } else if (error.request) {
-            throw new Error('Erro de conexão. Verifique sua internet.');
+            throw new Error('Erro de conexão. Verifique sua internet.'+ status);
         } else {
             throw new Error(error.message || 'Erro desconhecido durante a autenticação');
         }

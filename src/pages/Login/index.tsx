@@ -11,11 +11,13 @@ export default function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     console.log("Submitting login form")
     try {
       e.preventDefault();
+      setIsLoading(true);
       if (!email || !password) {
         return;
       }
@@ -23,6 +25,9 @@ export default function Login() {
       navigate('/dashboard');
     } catch (error) {
       console.log("Error login: ", error);
+      alert("Erro ao fazer login. Verifique suas credenciais e tente novamente.");
+    }finally{
+      setIsLoading(false);
     }
   };
 
@@ -64,8 +69,8 @@ export default function Login() {
               onChange={(e) => setPassword(e.target.value)}
             />
 
-            <Button type="submit" className="w-full mt-6">
-              Entrar
+            <Button type="submit" className="w-full mt-6" disabled={isLoading}>
+              {isLoading ? 'Entrando...' : 'Entrar'}
             </Button>
           </form>
 

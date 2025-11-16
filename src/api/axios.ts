@@ -1,8 +1,6 @@
 import axios from "axios"
 
-// Use o IP da sua máquina para acessar do celular
-// Em produção, use a URL real da API
-const baseURL = import.meta.env.VITE_API_URL || 'http://192.168.18.8:3000/api'
+const baseURL = 'http://localhost:3000/api'
 
 export const axiosInstance = axios.create({
     baseURL,

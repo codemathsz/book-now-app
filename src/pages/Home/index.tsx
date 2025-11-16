@@ -2,8 +2,13 @@ import { Card } from "@/components/Card";
 import { Button } from "@/components/Button";
 import { Bell, CalendarCheck, CheckCircle2, Clock, UtensilsCrossed } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useReservations } from "@/hooks/useReservations";
 
 export default function Home() {
+
+  const { timeSlots } = useReservations()
+  console.log("timer", timeSlots);
+  
   const steps = [
     {
       icon: CalendarCheck,
@@ -20,12 +25,6 @@ export default function Home() {
       title: "Gerencie suas Reservas",
       description: "Cancele quando precisar com facilidade",
     },
-  ];
-
-  const timeSlots = [
-    { time: "12:00 - 12:30", icon: Clock },
-    { time: "12:30 - 13:00", icon: Clock },
-    { time: "13:00 - 13:30", icon: Clock },
   ];
 
   return (
@@ -90,12 +89,12 @@ export default function Home() {
           </h2>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 max-w-4xl mx-auto">
-            {timeSlots.map((slot, index) => (
+            {timeSlots.map((slot) => (
               <Card
-                key={index}
+                key={slot.id}
                 className="hover:shadow-lg hover:border-primary/30 transition-all duration-300"
-                icon={slot.icon}
-                title={slot.time}
+                icon={Clock}
+                title={slot.label}
               />
             ))}
           </div>

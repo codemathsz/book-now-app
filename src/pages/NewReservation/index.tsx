@@ -100,24 +100,27 @@ export default function NewReservation() {
               </div>
 
               <div className="flex justify-between items-start px-2 gap-4 ">
-                {availableTimeSlots?.map((time) => {
-                  const isAlreadyReserved = isTimeSlotAlreadyReserved(
-                    time.time_slot_id, 
-                    selectedDate
-                  );
-                    
-                  return (
-                    <CardTimes 
-                      key={time.time_slot_id}
-                      availableTimeSlot={time}
-                      totalTables={time.max_tables}
-                      tablesAvailable={time.available_tables}
-                      onSelect={setSelectedTime}
-                      selected={selectedTime === time.time_slot_id}
-                      isAlreadyReserved={isAlreadyReserved}
-                    />
-                  );
-                })}
+                <div
+                  className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"
+                >
+                  {availableTimeSlots?.map((time) => {
+                    const isAlreadyReserved = isTimeSlotAlreadyReserved(
+                      time.time_slot_id,
+                      selectedDate
+                    );
+                    return (
+                      <CardTimes
+                        key={time.time_slot_id}
+                        availableTimeSlot={time}
+                        totalTables={time.max_tables}
+                        tablesAvailable={time.available_tables}
+                        onSelect={setSelectedTime}
+                        selected={selectedTime === time.time_slot_id}
+                        isAlreadyReserved={isAlreadyReserved}
+                      />
+                    );
+                  })}
+                </div>
               </div>
 
             </div>

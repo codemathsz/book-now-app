@@ -21,6 +21,17 @@ Aplicação web que permite colaboradores reservarem mesas em horários pré-def
 - **Firebase Hosting** (deploy e CI/CD)
 
 ---
+## LINK
+
+- Aplicação hospedada: `[https://app.sond.com.br/api/v1](https://book-now-grupo-lucio.web.app/)`
+- **Credenciais de Teste**:
+- Admin
+  - Email: `admin@booknow.comr`
+  - Senha: `admin123`
+- Usuário
+  - Email: `matheus@booknow.com`
+  - Senha: `matheus123`
+---
 
 ## 🏗️ Justificativa de Arquitetura & Decisões
 - **Frontend desacoplado**: React + Vite para agilidade, hot reload e tipagem forte com TypeScript.

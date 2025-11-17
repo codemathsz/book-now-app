@@ -23,7 +23,7 @@ Aplicação web que permite colaboradores reservarem mesas em horários pré-def
 ---
 ## LINK
 
-- Aplicação hospedada: `[https://app.sond.com.br/api/v1](https://book-now-grupo-lucio.web.app/)`
+- Aplicação hospedada: [Book Now WEB](https://book-now-grupo-lucio.web.app/)
 - **Credenciais de Teste**:
 - Admin
   - Email: `admin@booknow.comr`

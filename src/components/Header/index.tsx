@@ -18,7 +18,7 @@ export function Header(){
                     </div>
                     
                     {/* Desktop Navigation */}
-                    <div className="hidden md:flex items-center gap-8">
+                    <div className="max-sm:hidden flex items-center gap-8">
                         <AppNav/>
                         <Profile/>
                     </div>
@@ -26,7 +26,7 @@ export function Header(){
                     {/* Mobile Menu Button */}
                     <button 
                         onClick={() => setIsMenuOpen(!isMenuOpen)}
-                        className="md:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                        className="sm:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
                         aria-label="Toggle menu"
                     >
                         {isMenuOpen ? (
@@ -39,7 +39,7 @@ export function Header(){
 
                 {/* Mobile Menu */}
                 {isMenuOpen && (
-                    <div className="md:hidden absolute top-20 left-0 right-0 bg-white border-b shadow-lg z-50">
+                    <div className="sm:hidden absolute top-20 left-0 right-0 bg-white border-b shadow-lg z-50">
                         <div className="flex flex-col p-4 gap-4">
                             <AppNav/>
                             <div className="pt-4 border-t">

@@ -1,4 +1,4 @@
-# Reserva de Mesas – Grupo Lucio
+# Reserva de Mesas – Desafio Fullstack Grupo Lucio
 
 Sistema web para reserva de mesas no refeitório corporativo, desenvolvido como solução para o desafio técnico do Grupo Lucio.
 

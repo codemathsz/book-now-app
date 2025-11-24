@@ -7,7 +7,7 @@ interface CardTimesProps {
     availableTimeSlot: AvailabilityTimeSlots;
     tablesAvailable: number;
     totalTables: number;
-    onSelect: (timeSlotId: number) => void;
+    onSelect: (timeSlot: AvailabilityTimeSlots) => void;
     isAlreadyReserved?: boolean;
 }
 
@@ -50,7 +50,7 @@ export function CardTimes({ selected, availableTimeSlot, tablesAvailable, totalT
                 ${!isSoldOut && !selected ? 'hover:border-gray-300' : ''}
                 min-w-60
             `}
-            onClick={() => onSelect(availableTimeSlot.time_slot_id)}
+            onClick={() => onSelect(availableTimeSlot)}
         >
             <div className="mb-4">
                 <Clock className="w-8 h-8" color="#3b82f6" />
@@ -89,7 +89,7 @@ export function CardTimes({ selected, availableTimeSlot, tablesAvailable, totalT
                 <Button
                     variant={selected ? "primary" : "outline"}
                     className="w-full mt-2 gap-2"
-                    onClick={() => onSelect(availableTimeSlot.time_slot_id)}
+                    onClick={() => onSelect(availableTimeSlot)}
                 >
                     {selected ? (
                         <>

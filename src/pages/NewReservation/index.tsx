@@ -4,6 +4,7 @@ import { CardContainer } from "@/components/CardContainer";
 import { CardTimes } from "@/components/CardTimes";
 import { ReservationModal } from "@/components/ReservationModal";
 import { useReservations } from "@/hooks/useReservations";
+import type { AvailabilityTimeSlots } from "@/types";
 import { formatDateForDisplay } from "@/utils/utils";
 import { useState } from "react";
 import { Link } from "react-router-dom";
@@ -19,7 +20,7 @@ export default function NewReservation() {
   } = useReservations();
 
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [selectedTime, setSelectedTime] = useState<number | null>(null);
+  const [selectedTime, setSelectedTime] = useState<AvailabilityTimeSlots | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -32,7 +33,7 @@ export default function NewReservation() {
 
     await handleCreateReservation({
       date: formatDateToString(selectedDate),
-      time_slot_id: selectedTime
+      time_slot_id: selectedTime.time_slot_id,
     });
   };
 
@@ -115,7 +116,7 @@ export default function NewReservation() {
                         totalTables={time.max_tables}
                         tablesAvailable={time.available_tables}
                         onSelect={setSelectedTime}
-                        selected={selectedTime === time.time_slot_id}
+                        selected={selectedTime?.time_slot_id === time.time_slot_id}
                         isAlreadyReserved={isAlreadyReserved}
                       />
                     );
@@ -157,8 +158,8 @@ export default function NewReservation() {
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           date={formatDateForDisplay(selectedDate)}
-          time={selectedTime}
-          table={3}
+          timeSlot={selectedTime}
+          table={(selectedTime.max_tables - selectedTime.available_tables) + 1}
           onConfirm={handleConfirmReservation}
           onSuccess={handleGetAllReservations}
         />

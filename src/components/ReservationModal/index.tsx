@@ -1,15 +1,15 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Check, Loader2, AlertCircle } from 'lucide-react';
 import { Button } from '../Button';
 import { Modal } from '../Modal';
-import { useReservations } from '@/hooks/useReservations';
+import type { AvailabilityTimeSlots } from '@/types';
 
 interface ReservationModalProps {
     isOpen: boolean;
     onClose: () => void;
     date: string;
-    time: number;
+    timeSlot: AvailabilityTimeSlots | null;
     table: number;
     onConfirm: () => Promise<void>;
     onSuccess?: () => Promise<void>;
@@ -21,18 +21,13 @@ export function ReservationModal({
     isOpen,
     onClose,
     date,
-    time,
+    timeSlot,
     table,
     onConfirm,
     onSuccess
 }: ReservationModalProps) {
     const [step, setStep] = useState<ModalStep>('confirmation');
-    const { timeSlots } = useReservations();
     const navigate = useNavigate();
-
-    const timeSlot = useMemo(() =>{
-        return timeSlots.find(slot => slot.id === time);
-    }, [timeSlots, time]);
 
     const [errorMessage, setErrorMessage] = useState<string>('');
 
@@ -89,7 +84,7 @@ export function ReservationModal({
                     <div className="mb-6">
                         <p className="text-gray-600 mb-2">{date}</p>
                         <p className="text-lg font-semibold text-gray-900">
-                            {timeSlot?.label} • {table}
+                            {timeSlot?.label} • Mesa {table}
                         </p>
                     </div>
 
@@ -141,7 +136,7 @@ export function ReservationModal({
                     <div className="mb-8">
                         <p className="text-gray-600 mb-2">{date}</p>
                         <p className="text-lg font-semibold text-gray-900">
-                            {timeSlot?.label} • {table}
+                            {timeSlot?.label} • Mesa {table}
                         </p>
                     </div>
 

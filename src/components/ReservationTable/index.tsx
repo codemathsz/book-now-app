@@ -1,4 +1,5 @@
 import type { ReservationAdmin } from "@/types";
+import { parseDateToPattern } from "@/utils/utils";
 
 interface ReservationTableProps {
   reservations: ReservationAdmin[];
@@ -16,6 +17,7 @@ export function ReservationTable({ reservations }: ReservationTableProps) {
               <tr className="border-b border-gray-200">
                 <th className="text-left py-3 px-4 font-semibold text-gray-600 text-sm">Nome</th>
                 <th className="text-left py-3 px-4 font-semibold text-gray-600 text-sm">Email</th>
+                <th className="text-left py-3 px-4 font-semibold text-gray-600 text-sm">Criado em</th>
                 <th className="text-left py-3 px-4 font-semibold text-gray-600 text-sm">Horário</th>
                 <th className="text-left py-3 px-4 font-semibold text-gray-600 text-sm">Mesa</th>
                 <th className="text-left py-3 px-4 font-semibold text-gray-600 text-sm">Status</th>
@@ -27,6 +29,7 @@ export function ReservationTable({ reservations }: ReservationTableProps) {
                   <tr key={reservation.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
                     <td className="py-4 px-4 text-gray-900">{reservation.users.name}</td>
                     <td className="py-4 px-4 text-gray-600">{reservation.users.email}</td>
+                    <td className="py-4 px-4 text-gray-600">{parseDateToPattern(reservation.created_at)}</td>
                     <td className="py-4 px-4 text-gray-900">{reservation.time_slots.label}</td>
                     <td className="py-4 px-4 text-gray-900">{reservation.table_number}</td>
                     <td className="py-4 px-4">

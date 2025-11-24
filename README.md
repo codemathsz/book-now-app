@@ -1,4 +1,4 @@
-# Reserva de Mesas – Grupo Lucio
+# Reserva de Mesas – Desafio Fullstack Grupo Lucio
 
 Sistema web para reserva de mesas no refeitório corporativo, desenvolvido como solução para o desafio técnico do Grupo Lucio.
 
@@ -20,6 +20,17 @@ Aplicação web que permite colaboradores reservarem mesas em horários pré-def
 - **Supabase/PostgreSQL** (banco de dados e autenticação)
 - **Firebase Hosting** (deploy e CI/CD)
 
+---
+## LINK
+
+- Aplicação hospedada: [Book Now WEB](https://book-now-grupo-lucio.web.app/)
+- **Credenciais de Teste**:
+- Admin
+  - Email: `admin@booknow.comr`
+  - Senha: `admin123`
+- Usuário
+  - Email: `matheus@booknow.com`
+  - Senha: `matheus123`
 ---
 
 ## 🏗️ Justificativa de Arquitetura & Decisões

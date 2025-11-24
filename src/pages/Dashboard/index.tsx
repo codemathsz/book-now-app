@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { ReservationCard } from "@/components/ReservationCard";
@@ -8,7 +8,7 @@ import { useReservations } from "@/hooks/useReservations";
 function Dashboard() {
 
   const { user } = useAuth();
-  const { reservations } = useReservations();
+  const { reservations, handleGetAllReservations } = useReservations();
 
   const today = useMemo(() => {
     const date = new Date();
@@ -19,6 +19,10 @@ function Dashboard() {
       day: 'numeric'
     });
   }, [])
+
+  useEffect(() =>{
+    handleGetAllReservations();
+  },[])
 
   return (
     <main className="flex flex-col gap-8">

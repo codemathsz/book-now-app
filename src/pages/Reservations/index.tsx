@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ReservationCard } from '../../components/ReservationCard';
 import { useReservations } from '@/hooks/useReservations';
 import { parseDateString } from '@/utils/utils';
@@ -7,7 +7,7 @@ type TabType = 'proximas' | 'hoje' | 'historico';
 
 export default function Reservations() {
   const [activeTab, setActiveTab] = useState<TabType>('proximas');
-  const { reservations } = useReservations();
+  const { reservations, handleGetAllReservations } = useReservations();
 
   const reservationsToday = useMemo(() => {
     const today = new Date();
@@ -43,6 +43,10 @@ export default function Reservations() {
     });
   }, [reservations]);
 
+
+  useEffect(() =>{
+    handleGetAllReservations();
+  },[])
 
   const tabs = [
     { key: 'proximas' as TabType, label: 'Próximas' },
